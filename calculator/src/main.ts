@@ -4,8 +4,8 @@ import "./style.css";
 type Operator = '+'|'-'|'×'|"÷"|"=";
 
 interface CalcultorInterface {
-    targetValue: number | string;
-    //undefined를 받을 수 있다.
+    tempValue: string | number;
+    tempOperator?: Operator | string;
     operator?: Operator | string;
     render(inputValue: string | number): void;
     reset(): void;
@@ -14,7 +14,6 @@ interface CalcultorInterface {
 }
 
 const VALID_NUMBER_OF_DIGITS = 3;
-const BASE_DIGIT = 10;
 const INIT_VALUE = 0;
 
 const validateNumberLength = (value: string | number)=>{
@@ -28,9 +27,21 @@ const minus = (num1: number, num2: number) => num1 - num2;
 const multiple = (num1: number, num2: number) => num1 * num2;
 const divide = (num1: number, num2: number) => num1 / num2;
 
+type ComputedValue = {
+    // TS 빌트인 유틸리티 타입
+    [key in Exclude<Operator, '='>]: (num1: number, num2: number) => number;
+}
+
+const getComputedValue: ComputedValue = {
+    '+': plus,
+    '-': minus,
+    '×': multiple,
+    "÷": divide
+}
+
 const Calcultor: CalcultorInterface = {
-    targetValue: 0,
-    operator: undefined,
+    tempValue: 0,
+    tempOperator: undefined,
 
     render(inputValue: string | number ){//결과 값을 계속 바꾸기
 
@@ -43,58 +54,36 @@ const Calcultor: CalcultorInterface = {
         }
 
         if(resultEl){
-            this.targetValue = 
+            resultEl.innerText = 
             isZero(prevValue)? 
             String(inputValue) : String(prevValue + inputValue);
-            resultEl.innerText = this.targetValue;            
         }
     },
     reset(){
-        this.targetValue = 0;
+        // this.targetValue = 0;
     },
     tempCalculate(operator: Operator | string) {
-        const isCalculate = operator === '=';
+        const isReadyCalculate = operator === '=';
+        const isTempCalculate = ['+','-','×',"÷"].includes(operator);
 
-        if(isCalculate){
+        if(isTempCalculate){
+            const resultEl = <HTMLDivElement>document.querySelector("#result");
+            this.tempOperator = operator;
+            this.tempValue = Number(resultEl.innerText)
 
-        }
-        this.operator = operator;
-
-        if(operator === "+"){
-            plus();
-        }
-
-        if(operator === "-"){
-            minus();
+            resultEl.innerText = String(0);
+            return ;
         }
 
-        if(operator === "×"){
-            multiple();
-        }
-
-        if(operator === "="){
-            divide();
-        }
-        // switch(operator){
-        //     case '+':
-        //         this.plus();
-        //         break;
-                
-        //     case '-': 
-        //         this.minus();
-        //         break;
-
-        //     case '×':
-        //         this.multiple()
-        //         break;
-
-        //     case '÷':
-        //         break;
-
-        //     case '=':
-
-        //         break;
-        // }
+        if(this.tempOperator 
+            && ['+','-','×',"÷"].includes(this.tempOperator)
+            && isReadyCalculate){
+                const resultEl = <HTMLDivElement>document.querySelector("#result");
+                const resultValue = getComputedValue[this.tempOperator as Exclude<Operator, '='>](
+                    Number(this.tempValue), Number(resultEl.innerText));
+                    console.log(resultValue);
+                resultEl.innerText = String(resultValue);
+            }
     },
     initEvent(){
        
@@ -102,16 +91,16 @@ const Calcultor: CalcultorInterface = {
     
         buttonContainerEl?.addEventListener('click', ({target}) => {
             const buttonText = (target as HTMLButtonElement).innerText;
-    
             if(buttonText === "AC"){
                 this.reset();
             } 
             
             if(['+','-','×',"÷","="].includes(buttonText)){
                 this.tempCalculate(buttonText);
+                return;
             }
 
-            if(Number.isNaN(buttonText)){
+            if(!Number.isNaN(buttonText)){
                 this.render(Number(buttonText));
             }
         });
