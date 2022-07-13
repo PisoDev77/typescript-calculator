@@ -13,7 +13,7 @@ const Calcultor = {
         const resultEl = <HTMLElement>document.querySelector("#result");
 
         if(resultEl){
-            resultEl.innerText = String(this.value);
+            resultEl.innerText = String(thgis.value);
         }
     },
     reset(){
@@ -23,10 +23,13 @@ const Calcultor = {
        
         const buttonContainerEl = document.querySelector(".contents");
     
-        buttonContainerEl?.addEventListener('click', function({target}){
+        buttonContainerEl?.addEventListener('click', ({target}) => {
             const buttonText = (target as HTMLButtonElement).innerText;
     
             if(buttonText === "AC"){
+                //해결법 2가지 
+                //1. tsconfig에 noImplicitAny 권장하지않음
+                //2. Arrow 함수 활용 this를 알 수 있으니까
                 this.reset(); // this의 외부 값은 섀도 처리됨.
             } else{
     
