@@ -3,21 +3,27 @@ import "./style.css";
 const VALID_NUMBER_OF_DIGITS = 3;
 const BASE_DIGIT = 10;
 
-
+const validateNumberLength = (value: string | number)=>{
+    return String(value).length < VALID_NUMBER_OF_DIGITS;
+};
 
 const Calcultor = {
     value: 0,
 
-    render(){//결과 값을 계속 바꾸기
+    render(inputValue: string | number ){//결과 값을 계속 바꾸기
 
         const resultEl = <HTMLElement>document.querySelector("#result");
+        const prevValue = Number(resultEl.innerText);
 
         if(resultEl){
-            resultEl.innerText = String(thgis.value);
+            resultEl.innerText = isNaN(prevValue) ? String(inputValue) : String(prevValue)
         }
     },
     reset(){
         this.value = 0;
+    },
+    operator(inputNumber: number){
+        this.render(inputNumber)
     },
     initEvent(){
        
@@ -32,7 +38,7 @@ const Calcultor = {
                 //2. Arrow 함수 활용 this를 알 수 있으니까
                 this.reset(); // this의 외부 값은 섀도 처리됨.
             } else{
-    
+                this.operator(Number(buttonText));
             }
         });
         
