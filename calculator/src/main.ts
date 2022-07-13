@@ -12,3 +12,15 @@ const resultEl = <HTMLElement>document.querySelector("#result");
 if(resultEl){
     resultEl.innerText = String(99999);
 }
+
+//런타임 환경에서 나올 수 있는 에러 탐지함.
+/*
+resultEl.addEventListener("click", ({target})=> {
+    alert(target.innerText);
+})
+*/
+resultEl.addEventListener("click", ({target}: MouseEvent)=> {
+    if(target){
+        alert((target as HTMLDivElement).innerText);
+    }
+});
