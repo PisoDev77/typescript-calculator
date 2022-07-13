@@ -1,5 +1,18 @@
 import "./style.css";
 
+
+type Operator = '+'|'-'|'×'|"÷"|"=";
+
+interface CalcultorInterface {
+    targetValue: number | string;
+    //undefined를 받을 수 있다.
+    operator?: Operator | string;
+    render(inputValue: string | number): void;
+    reset(): void;
+    tempCalculate(operator: Operator | string): void;
+    initEvent(): void;
+}
+
 const VALID_NUMBER_OF_DIGITS = 3;
 const BASE_DIGIT = 10;
 const INIT_VALUE = 0;
@@ -10,26 +23,78 @@ const validateNumberLength = (value: string | number)=>{
 
 const isZero = (value: string) => Number(value) === 0;
 
-const Calcultor = {
-    value: 0,
+const plus = (num1: number, num2: number) => num1 + num2;
+const minus = (num1: number, num2: number) => num1 - num2;
+const multiple = (num1: number, num2: number) => num1 * num2;
+const divide = (num1: number, num2: number) => num1 / num2;
+
+const Calcultor: CalcultorInterface = {
+    targetValue: 0,
+    operator: undefined,
 
     render(inputValue: string | number ){//결과 값을 계속 바꾸기
 
         const resultEl = <HTMLElement>document.querySelector("#result");
         const prevValue = resultEl.innerText;
 
-        if(validateNumberLength(prevValue)){
+        if(!validateNumberLength(prevValue)){
+            alert("3자리 이상의 숫자를 입력할 수 없습니다.");
             return;
         }
 
         if(resultEl){
-            resultEl.innerText =
+            this.targetValue = 
             isZero(prevValue)? 
-            String(inputValue) : String(prevValue + inputValue)
+            String(inputValue) : String(prevValue + inputValue);
+            resultEl.innerText = this.targetValue;            
         }
     },
     reset(){
-        this.value = 0;
+        this.targetValue = 0;
+    },
+    tempCalculate(operator: Operator | string) {
+        const isCalculate = operator === '=';
+
+        if(isCalculate){
+
+        }
+        this.operator = operator;
+
+        if(operator === "+"){
+            plus();
+        }
+
+        if(operator === "-"){
+            minus();
+        }
+
+        if(operator === "×"){
+            multiple();
+        }
+
+        if(operator === "="){
+            divide();
+        }
+        // switch(operator){
+        //     case '+':
+        //         this.plus();
+        //         break;
+                
+        //     case '-': 
+        //         this.minus();
+        //         break;
+
+        //     case '×':
+        //         this.multiple()
+        //         break;
+
+        //     case '÷':
+        //         break;
+
+        //     case '=':
+
+        //         break;
+        // }
     },
     initEvent(){
        
@@ -39,11 +104,14 @@ const Calcultor = {
             const buttonText = (target as HTMLButtonElement).innerText;
     
             if(buttonText === "AC"){
-                //해결법 2가지 
-                //1. tsconfig에 noImplicitAny 권장하지않음
-                //2. Arrow 함수 활용 this를 알 수 있으니까
-                this.reset(); // this의 외부 값은 섀도 처리됨.
-            } else{
+                this.reset();
+            } 
+            
+            if(['+','-','×',"÷","="].includes(buttonText)){
+                this.tempCalculate(buttonText);
+            }
+
+            if(Number.isNaN(buttonText)){
                 this.render(Number(buttonText));
             }
         });
