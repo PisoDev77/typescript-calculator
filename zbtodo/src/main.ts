@@ -18,12 +18,12 @@ class TodoApp{
   }
   
 
-  addTodo(event){
+  addTodo(event: KeyboardEventInit){
     if(event.key !== "Enter"){
       return;
     }
-    
-    const target = event.target;
+
+    const target = <HTMLInputElement>(event as KeyboardEvent).target;
 
     if(event.key === "Enter"){
 
@@ -54,27 +54,27 @@ class TodoApp{
    * @param {string} filterType
    * @returns {Todo[]} 필터링된 타입
    */
-  getTodoListByFilter(filterType) {}
+  // getTodoListByFilter(filterType) {}
 
   /**
    * @param {Object} todo  
    * @param {string} [todo.text] 
    * @param {string} [todo.status] 
    */
-  updateTodo({id, text, status}){}
+  // updateTodo({id, text, status}){}
 
   /**
    * 할 일을 삭제
    * @param {number} id 
    */
-  removeTodo(id){}
+  // removeTodo(id){}
 
-  generateTodoList(todoList){
+  generateTodoList(todo: Todo){
     const contaienrEl = document.createElement('div');
     const todoTemplate = `
     <div class="item__div"> 
-      <input type="checkbox" ${todoList.isDone && 'checked'} />
-      <div class="content" ${todoList.isDone && 'checked'} contentEditable>${todoList.content}</div>
+      <input type="checkbox" ${todo.isDone && 'checked'} />
+      <div class="content" ${todo.isDone && 'checked'} contentEditable>${todo.content}</div>
       <button>X</button>
     </div>
     `;
@@ -84,7 +84,7 @@ class TodoApp{
 
     return contaienrEl;
   }
-  render(todoList){
+  render(todoList: Todo[] = []){
     const todoListEl = document.querySelector(".todo-items");
     
     const fragment = document.createDocumentFragment();
