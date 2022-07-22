@@ -63,11 +63,11 @@ class TodoApp{
    */
   // updateTodo({id, text, status}){}
 
-  /**
-   * 할 일을 삭제
-   * @param {number} id 
-   */
-  // removeTodo(id){}
+
+  removeTodo(selectedId: Todo['id']){
+    this.todoList.filter(todo => todo.id !== selectedId);
+    this.render(this.todoList);
+  }
 
   generateTodoList(todo: Todo){
     const contaienrEl = document.createElement('div');
@@ -82,10 +82,15 @@ class TodoApp{
     contaienrEl.classList.add("item");
     contaienrEl.innerHTML = todoTemplate;
 
+    const deleteButtonEl = contaienrEl.querySelector("button");
+    deleteButtonEl?.addEventListener("click",()=>this.removeTodo(todo.id))
+
     return contaienrEl;
   }
   render(todoList: Todo[] = []){
     const todoListEl = document.querySelector(".todo-items");
+
+    todoListEl?.replaceChildren();
     
     const fragment = document.createDocumentFragment();
     // 실질적으로 그려지지않은 DOM 상태
